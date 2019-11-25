@@ -1,0 +1,52 @@
+{block content}
+
+<h2>Přidat semestrálku</h2>
+
+{control assignmentForm}
+
+<h2>Přehled semestrálek</h2>
+
+<div n:if="!$assignments" class="alert alert-info">V systému nejsou zadány žádné semestrálky...</div>
+
+<table class="table table-assignments table-striped table-bordered" n:if="$assignments">
+    <tr>
+        <th>ID</th>
+        <th>Název semestrálky</th>
+        <th>Předmět</th>
+        <th>Zkouška</th>
+        <th>Termín</th>
+        <th></th>
+    </tr>
+
+    {foreach $assignments as $assignment}
+        <tr n:class="$assignment->date < $actualDate && !$assignment->complete ? danger, $assignment->complete ? warning">
+
+            <td>{$assignment->id}</td>
+            <td>{$assignment->name}</td>
+            <td>{$assignment->subject->name}</td>
+            <td><i n:class="glyphicon, $assignment->is_exam ? glyphicon-ok : glyphicon-remove"></i></td>
+            <td>{$assignment->date|date:'d. m. Y'}</td>
+            <td class="action">
+
+                {* Nastavení semestrálky jako dokončené / nedokončené *}
+                {if !$assignment->complete}
+                    <a n:href="setCompleted, $assignment->id, 1" class="btn btn-sm btn-success">
+                        <i class="glyphicon glyphicon-ok"></i> Dokončit</a>
+                {else}
+                    <a n:href="setCompleted, $assignment->id, 0" class="btn btn-sm btn-warning">
+                        <i class="glyphicon glyphicon-repeat"></i> Znovu zpracovat</a>
+                {/if}
+
+                {* Základní akce, které je možné provést se semestrálkou *}
+                <a n:href="edit, $assignment->id" class="btn btn-sm btn-primary">
+                    <i class="glyphicon glyphicon-edit"></i> Upravit
+                </a>
+
+                <a n:href="remove, $assignment->id" class="btn btn-sm btn-danger"
+                   onclick="return confirm('Opravdu chcete práci smazat?')">
+                    <i class="glyphicon glyphicon-remove"></i> Smazat
+                </a>
+            </td>
+        </tr>
+    {/foreach}
+</table>
