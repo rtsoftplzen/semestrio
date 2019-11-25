@@ -1,0 +1,14 @@
+version: '2.1'
+
+services:
+  semestrio.local:
+    container_name: 'semestrio.local'
+    build:
+      context: ./build/
+
+    ports:
+      - '80:80'
+
+    volumes:
+      - ./../:/var/www/semestrio.local
+      - ./volumes/logs/:/var/log/docker/
