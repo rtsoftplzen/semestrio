@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\IRow;
 use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
 use Exception;
@@ -15,7 +16,7 @@ use Tracy\Debugger;
 class AssignmentModel extends BaseModel
 {
     /** @const požadovaný formát data */
-    const DATE_FORMAT = 'd.m.Y';
+    public const DATE_FORMAT = 'd.m.Y';
 
     /** @var string název výchozí tabulky modelu */
     protected $tableName = 'assignment';
@@ -27,15 +28,14 @@ class AssignmentModel extends BaseModel
      * @param bool $forForm
      * @return bool|ActiveRow|ArrayHash
      */
-    public function find($primaryKey, bool $forForm = FALSE)
+    public function find($primaryKey, bool $forForm = false)
     {
         $row = $this->getTable()->wherePrimary($primaryKey)->fetch();
 
         if ($row && $forForm)
         {
-            /** @var ArrayHash $assignment */
             $assignment = ArrayHash::from($row);
-            $assignment->date = $assignment->date->format($this::DATE_FORMAT);
+            $assignment->date = $assignment->date->format(self::DATE_FORMAT);
 
             return $assignment;
         }
@@ -46,9 +46,9 @@ class AssignmentModel extends BaseModel
 
     /**
      * Vrací kolekci semestrálek z úložiště (databáze)
-     * @return array|\Nette\Database\Table\IRow[]
+     * @return IRow[]
      */
-    public function getAssignments()
+    public function getAssignments(): array
     {
         return $this->getTable()->order('complete ASC, date ASC')->fetchAll();
     }
@@ -58,7 +58,7 @@ class AssignmentModel extends BaseModel
      * Vrací čísleník definovaných předmětů ve formátu id => název
      * @return array
      */
-    public function getSubjects()
+    public function getSubjects(): array
     {
         return $this
             ->getTable('subject')
@@ -70,7 +70,7 @@ class AssignmentModel extends BaseModel
      * Uloží informace o semestrálce do systému (databáze)
      * @param ArrayHash $assignment
      * @param int|null $assignmentId
-     * @return bool|int|\Nette\Database\Table\IRow|ArrayHash
+     * @return bool|int|IRow|ArrayHash
      */
     public function saveAssignment(ArrayHash $assignment, int $assignmentId = null)
     {
@@ -129,15 +129,17 @@ class AssignmentModel extends BaseModel
      * Nastavení stavu dokončení semestrálky
      * @param int $assignmentId
      * @param bool $complete
-     * @return bool|int
+     * @return bool
      */
-    public function setCompleted(int $assignmentId, bool $complete)
+    public function setCompleted(int $assignmentId, bool $complete): bool
     {
         if ($assignmentId)
         {
-            return $this->getTable()->wherePrimary($assignmentId)->update(['complete' => $complete]);
+            $result = $this->getTable()->wherePrimary($assignmentId)->update(['complete' => $complete]);
+
+            return (bool) $result;
         }
 
-        return FALSE;
+        return false;
     }
 }

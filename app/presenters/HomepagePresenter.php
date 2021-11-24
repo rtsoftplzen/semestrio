@@ -2,9 +2,13 @@
 
 namespace App\Presenters;
 
+use App\Components\AssignmentForm\AssignmentForm;
+use App\Components\AssignmentForm\IAssignmentFormFactory;
 use Nette;
 use App\Model\AssignmentModel;
-use App\Components\IAssignmentFormFactory;
+use Nette\Application\AbortException;
+use Nette\Application\BadRequestException;
+use Nette\Utils\DateTime;
 
 /**
  * Class HomepagePresenter
@@ -18,13 +22,18 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     /** @var AssignmentModel */
     private $assignmentModel;
 
+    public const ACTION_DEFAULT = 'Homepage:default';
+
 
     /**
      * HomepagePresenter constructor.
      * @param IAssignmentFormFactory $assignmentFormFactory
      * @param AssignmentModel $assignmentModel
      */
-    public function __construct(IAssignmentFormFactory $assignmentFormFactory, AssignmentModel $assignmentModel)
+    public function __construct(
+        IAssignmentFormFactory $assignmentFormFactory,
+        AssignmentModel $assignmentModel
+    )
     {
         $this->assignmentFormFactory = $assignmentFormFactory;
         $this->assignmentModel = $assignmentModel;
@@ -36,9 +45,9 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     /**
      * Vykreslení výchozí stránky s přehledem semestrálek
      */
-    public function renderDefault()
+    public function renderDefault(): void
     {
-        $this->template->actualDate  = (new Nette\Utils\DateTime())->setTime(0, 0, 0);
+        $this->template->actualDate  = (new DateTime())->setTime(0, 0);
         $this->template->assignments = $this->assignmentModel->getAssignments();
     }
 
@@ -46,14 +55,19 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     /**
      * Akce editace semestrálky
      * @param int $id
-     * @throws Nette\Application\BadRequestException
+     * @throws BadRequestException
      */
-    public function actionEdit($id)
+    public function actionEdit(int $id): void
     {
         if (!$id)
         {
-            // $this->error
-            throw new Nette\Application\BadRequestException();
+            throw new BadRequestException();
+        }
+
+        $assignment = $this->assignmentModel->find($id, true);
+        if (!$assignment)
+        {
+            throw new BadRequestException();
         }
     }
 
@@ -61,15 +75,14 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     /**
      * Akce smazání semestrálky ze systému
      * @param int $id
-     * @throws Nette\Application\AbortException
-     * @throws Nette\Application\BadRequestException
+     * @throws AbortException
+     * @throws BadRequestException
      */
-    public function actionRemove($id)
+    public function actionRemove(int $id): void
     {
         if (!$id)
         {
-            // $this->error
-            throw new Nette\Application\BadRequestException();
+            throw new BadRequestException();
         }
 
         $isRemoved = $this->assignmentModel->remove($id);
@@ -91,19 +104,19 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
      * Akce nastavení stavu dokončení
      * @param int $id
      * @param int $complete
-     * @throws Nette\Application\AbortException
-     * @throws Nette\Application\BadRequestException
+     * @throws AbortException
+     * @throws BadRequestException
      */
-    public function actionSetCompleted(int $id, int $complete)
+    public function actionSetCompleted(int $id, int $complete): void
     {
-        if (!$id || ($complete != 0 && $complete != 1))
+        if (!$id || ($complete !== 0 && $complete !== 1))
         {
-            throw new Nette\Application\BadRequestException();
+            throw new BadRequestException();
         }
 
         $isUpdated = $this->assignmentModel->setCompleted($id, $complete);
 
-        if ($isUpdated !== FALSE)
+        if ($isUpdated)
         {
             $this->flashMessage(sprintf(
                 'Semestrálka byla úspěšně označena jako %s.', $complete ? 'dokončená' : 'nedokončená'),
@@ -121,13 +134,13 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
 
     /**
      * Vytvoření komponenty formuláře pro vložení nové semestrálky
-     * @return \App\Components\AssignmentForm
+     * @return AssignmentForm
      */
-    protected function createComponentAssignmentForm()
+    protected function createComponentAssignmentForm(): AssignmentForm
     {
         $form = $this->assignmentFormFactory->create($this->getParameter('id'));
 
-        $form->onFormSubmit[] = function($assignment)
+        $form->onFormSubmit[] = function ($assignment)
         {
             if ($assignment)
             {

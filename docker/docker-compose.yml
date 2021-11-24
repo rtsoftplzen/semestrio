@@ -7,8 +7,18 @@ services:
       context: ./build/
 
     ports:
-      - '80:80'
+      - '8090:80'
 
     volumes:
       - ./../:/var/www/semestrio.local
       - ./volumes/logs/:/var/log/docker/
+
+  database-local:
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD: 'T2ME8EE7qTHepopvnjGb'
+      MYSQL_DATABASE: semestrio
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./volumes/mariadb/:/var/lib/mysql

@@ -7,7 +7,7 @@ $configurator = new Nette\Configurator;
 // V Dockeru spustíme aplikaci v testovacím režimu
 if(isset($_SERVER['DOCKER']) && $_SERVER['DOCKER'] == 1)
 {
-    //$configurator->setDebugMode(TRUE);
+    $configurator->setDebugMode(true);
 }
 
 $configurator->enableTracy(__DIR__ . '/../log');
@@ -22,6 +22,4 @@ $configurator->createRobotLoader()
 $configurator->addConfig(__DIR__ . '/config/config.neon');
 $configurator->addConfig(__DIR__ . '/config/config.local.neon');
 
-$container = $configurator->createContainer();
-
-return $container;
+return $configurator->createContainer();

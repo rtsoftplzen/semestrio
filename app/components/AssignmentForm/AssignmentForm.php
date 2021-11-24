@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components;
+namespace App\Components\AssignmentForm;
 
 use App\Component\BaseComponent;
 use App\Model\AssignmentModel;
@@ -17,7 +17,7 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 class AssignmentForm extends BaseComponent
 {
     /** @const maximální délka názvu semestrálky */
-    const NAME_MAX_LENGTH = 50;
+    public const NAME_MAX_LENGTH = 50;
 
     /** @var int|null id semestrálky */
     private $assignmentId;
@@ -34,7 +34,10 @@ class AssignmentForm extends BaseComponent
      * @param int|null $assignmentId id semestrálky
      * @param AssignmentModel $assignmentModel
      */
-    public function __construct(int $assignmentId = NULL, AssignmentModel $assignmentModel)
+    public function __construct(
+        int $assignmentId = NULL,
+        AssignmentModel $assignmentModel
+    )
     {
         $this->assignmentId = $assignmentId;
         $this->assignmentModel = $assignmentModel;
@@ -47,7 +50,7 @@ class AssignmentForm extends BaseComponent
      * Vytvoření komponenty formuláře
      * @return Form
      */
-    protected function createComponentForm()
+    protected function createComponentForm(): Form
     {
         $form = new Form();
         $form->setRenderer(new BootstrapRenderer());
@@ -84,7 +87,7 @@ class AssignmentForm extends BaseComponent
      * Metoda volaná ihned po připojení formuláře k presenteru
      * @param Form $form
      */
-    public function handleForm(Form $form)
+    public function handleForm(Form $form): void
     {
         if ($form->isSuccess())
         {
@@ -92,9 +95,9 @@ class AssignmentForm extends BaseComponent
 
             $this->onFormSubmit($assignment);
         }
-        elseif (!$form->isSubmitted() && $this->assignmentId)
+        elseif ($this->assignmentId && !$form->isSubmitted())
         {
-            $assignment = $this->assignmentModel->find($this->assignmentId, TRUE);
+            $assignment = $this->assignmentModel->find($this->assignmentId, true);
 
             if ($assignment)
             {
@@ -102,19 +105,4 @@ class AssignmentForm extends BaseComponent
             }
         }
     }
-}
-
-
-/**
- * Interface IAssignmentFormFactory
- * @package App\Components
- */
-interface IAssignmentFormFactory
-{
-    /**
-     * Vytvoření nové instance formuláře pomocí vygenerováné továrničky
-     * @param int|null $assignmentId id semestrálky
-     * @return AssignmentForm
-     */
-    public function create(int $assignmentId = NULL);
 }

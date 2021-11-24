@@ -2,16 +2,19 @@
 
 namespace App\Model;
 
-use Nette\Object;
 use Nette\Database\Context;
+use Nette\Database\Table\Selection;
 use Nette\InvalidArgumentException;
+use Nette\SmartObject;
 
 /**
  * Class BaseModel
  * @package App\Model
  */
-class BaseModel extends Object
+class BaseModel
 {
+    use SmartObject;
+
     /** @var Context připojení k databázy */
     private $databaseConnection;
 
@@ -31,9 +34,9 @@ class BaseModel extends Object
     /**
      * Vrací database selection na tabulku modelu
      * @param string|null $tableName
-     * @return \Nette\Database\Table\Selection
+     * @return Selection
      */
-    public function getTable(string $tableName = NULL)
+    public function getTable(string $tableName = NULL): Selection
     {
         if (!$tableName && !$this->tableName)
         {

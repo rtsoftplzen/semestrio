@@ -1,8 +1,8 @@
 # Nastavení připojení do databáze
 database:
     default:
-        dsn: 'mysql:host=;dbname='
-        user: ''
+        dsn: 'mysql:host=database-local;dbname=semestrio'
+        user: 'root'
         password: ''
 
 parameters:

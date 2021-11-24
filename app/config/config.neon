@@ -10,5 +10,5 @@ session:
 
 services:
 	router: App\RouterFactory::createRouter
-	- App\Components\IAssignmentFormFactory
+	- App\Components\AssignmentForm\IAssignmentFormFactory
 	- App\Model\AssignmentModel
