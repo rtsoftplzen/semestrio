@@ -1,0 +1,23 @@
+{
+  "name": "semestrio",
+  "version": "1.0.0",
+  "description": "Semestrio Web App",
+  "main": "www/index.php",
+  "dependencies": {},
+  "devDependencies": {
+    "cypress": "^9.5.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rtsoftplzen/semestrio.git"
+  },
+  "author": "RTsoft s.r.o.",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/rtsoftplzen/semestrio/issues"
+  },
+  "homepage": "https://github.com/rtsoftplzen/semestrio#readme"
+}
