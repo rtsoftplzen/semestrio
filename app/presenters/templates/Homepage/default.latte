@@ -8,7 +8,11 @@
 
 <div n:if="!$assignments" class="alert alert-info">V systému nejsou zadány žádné semestrálky...</div>
 
-<table class="table table-assignments table-striped table-bordered" n:if="$assignments">
+<div>Počet semestrální prací: <span data-message="total-count">{count($assignments)}</span></div>
+
+<br>
+
+<table class="table table-assignments table-striped table-bordered" n:if="$assignments" n:snippet="assignmentList" data-table="assignment-list">
     <tr>
         <th>ID</th>
         <th>Název semestrálky</th>
@@ -19,13 +23,13 @@
     </tr>
 
     {foreach $assignments as $assignment}
-        <tr n:class="$assignment->date < $actualDate && !$assignment->complete ? danger, $assignment->complete ? warning">
+        <tr data-row="{$assignment->name}" n:class="$assignment->date < $actualDate && !$assignment->complete ? danger, $assignment->complete ? warning">
 
             <td>{$assignment->id}</td>
-            <td>{$assignment->name}</td>
-            <td>{$assignment->subject->name}</td>
-            <td><i n:class="glyphicon, $assignment->is_exam ? glyphicon-ok : glyphicon-remove"></i></td>
-            <td>{$assignment->date|date:'d. m. Y'}</td>
+            <td data-cell="assignment-name">{$assignment->name}</td>
+            <td data-cell="subject">{$assignment->subject->name}</td>
+            <td data-cell="is-exam" data-id="{$assignment->id}"><i id="i-{$assignment->id}" n:class="glyphicon, $assignment->is_exam ? glyphicon-ok : glyphicon-remove"></i></td>
+            <td data-cell="date">{$assignment->date|date:'d. m. Y'}</td>
             <td class="action">
 
                 {* Nastavení semestrálky jako dokončené / nedokončené *}
@@ -38,7 +42,7 @@
                 {/if}
 
                 {* Základní akce, které je možné provést se semestrálkou *}
-                <a n:href="edit, $assignment->id" class="btn btn-sm btn-primary">
+                <a n:href="edit, $assignment->id" class="btn btn-sm btn-primary" data-button="edit-button">
                     <i class="glyphicon glyphicon-edit"></i> Upravit
                 </a>
 

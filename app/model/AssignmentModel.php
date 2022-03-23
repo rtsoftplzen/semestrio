@@ -82,7 +82,7 @@ class AssignmentModel extends BaseModel
                 'is_exam'    => $assignment['is_exam'],
                 'date'       => DateTime::createFromFormat($this::DATE_FORMAT, $assignment['date'])
             ];
-
+            Debugger::log($record);
             if($assignmentId === NULL)
             {
                 return $this->getTable()->insert($record);
@@ -125,6 +125,12 @@ class AssignmentModel extends BaseModel
     }
 
 
+    public function removeAll(): void
+    {
+        $this->getTable()->delete();
+    }
+
+
     /**
      * Nastavení stavu dokončení semestrálky
      * @param int $assignmentId
@@ -136,6 +142,18 @@ class AssignmentModel extends BaseModel
         if ($assignmentId)
         {
             $result = $this->getTable()->wherePrimary($assignmentId)->update(['complete' => $complete]);
+
+            return (bool) $result;
+        }
+
+        return false;
+    }
+
+    public function setIsExam(int $assignmentId, int $isExam): bool
+    {
+        if ($assignmentId)
+        {
+            $result = $this->getTable()->wherePrimary($assignmentId)->update(['is_exam' => $isExam]);
 
             return (bool) $result;
         }

@@ -61,20 +61,24 @@ class AssignmentForm extends BaseComponent
                  'Název semestrálky je dlouhý, maximálně je povoleno ' . $this::NAME_MAX_LENGTH . ' znaků.',
                  $this::NAME_MAX_LENGTH
              )
-             ->setRequired('Zadejte název semestrálky');
+             ->setRequired('Zadejte název semestrálky')
+             ->setAttribute('data-test', 'assignment-name');
 
         $form->addSelect('subject_id', 'Předmět', $this->assignmentModel->getSubjects())
              ->setPrompt('Vyberte předmět')
-             ->setRequired('Vyberte prosím předmět');
+             ->setRequired('Vyberte prosím předmět')
+             ->setAttribute('data-test', 'subject');;
 
-        $form->addCheckbox('is_exam', 'Jedná se o zkoušku?');
+        $form->addCheckbox('is_exam', 'Jedná se o zkoušku?')
+             ->setAttribute('data-test', 'is-exam');;
 
         $form->addText('date', 'Datum')
              ->setAttribute('placeholder', 'DD.MM.YYYY')
              ->setRequired('Zadejte datum odevzdání semestrálky')
-             ->addRule(FormValidator::DATE, 'Zadejte platné datum');
+             ->addRule(FormValidator::DATE, 'Zadejte platné datum')
+             ->setAttribute('data-test', 'date');
 
-        $form->addSubmit('save', 'Uložit');
+        $form->addSubmit('save', 'Uložit')->setAttribute('data-test', 'submit');
 
         // split
         $form->onAnchor[] = [$this, 'handleForm'];
